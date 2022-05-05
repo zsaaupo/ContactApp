@@ -47,6 +47,9 @@
         $('#add_new_contact').hide()
         $('#trash').hide()
         $('#my_account').hide()
+        $('.container').hide()
+        $('#log_info').show()
+        $('#contract_list_head').hide()
         // let cookie_value = document.cookie
         // const parts = cookie_value.split(";")
         // // 0-Access 1- csrf 2- slug 3 -name
@@ -64,6 +67,9 @@
             $('#trash').show()
             $('#my_account').text(login_info.user_name)
             $('#my_account').show()
+            $('.container').show()
+            $('#log_info').hide()
+            $('#contract_list_head').show()
 
         }
 
