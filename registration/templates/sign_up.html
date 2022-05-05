@@ -1,0 +1,47 @@
+{% extends 'layout/base.html' %}
+{% block title %} Sign in {% endblock %}
+
+{% block body %}
+	<h1 class="text-center">Sign Up</h1>
+	<hr>
+	<div id="from_body">
+		<form enctype="multipart/form-data" id="form_sign_up" method="POST">
+			{% csrf_token %}
+			<label for="full_name">Full name:</label><br>
+			<input type="text" id="full_name" name="full_name" placeholder="Full name"><br><br>
+			<label for="email">Email:</label><br>
+			<input type="email" id="email" name="email" placeholder="abc@gmail.com"><br><br>
+			<label for="password">Password:</label><br>
+			<input type="password" id="password" name="password" placeholder="password"><br><br>
+			<input class="m-3 btn neuEffect btn-lg" type="submit" value="Sign Up">
+		</form>
+	</div>
+
+	<script>
+		$('#form_sign_up').submit(function(event){
+			event.preventDefault()
+			var data_str = new FormData(document.getElementById('form_sign_up'));
+			$.ajax({
+				type:"POST",
+				headers: {"X-CSRFToken" : '{{csrf_token}}'},
+				enctype:'multipart/form-data',
+				processData:false,
+				async:false,
+				cache:false,
+				contentType:false,
+				url : "http://127.0.0.1:8000/registration/api/sign_up/",
+				data: data_str,
+				success: function(value){
+					$("#from_body").html(`success`)
+					if(value.status == 200){
+						window.location = '/'
+					}
+				},
+				error: function(errormsg){
+					console.log(errormsg)
+				}
+			});
+		})
+	</script>
+{% endblock %}
+

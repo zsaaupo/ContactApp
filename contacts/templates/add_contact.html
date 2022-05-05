@@ -1,0 +1,51 @@
+{% extends "layout/base.html" %}
+{% block title %} Add Contacts {% endblock %}
+{% block body %}
+<br>
+    <h1 style="text-align: center;">Add Contact</h1>
+<br>
+<div class="form">
+        {% csrf_token %}
+        <label for="name">Full Name *:</label><br>
+        <input class="input-lg" id="name" name="name" value="" placeholder="Full name" required><br><br>
+        <label for="email">Email:</label><br>
+        <input class="input-lg" id="email" name="email" value="" placeholder="Email"><br><br>
+        <label for="phone">Phone *:</label><br>
+        <input class="input-lg" type="text" id="phone" name="phone" value="" placeholder="Phone" required><br><br>
+        <input type="submit" class="btn btn-lg btn-success rounded-pill" value="SAVE" id="save">
+</div>
+
+<script>
+        let x = document.cookie
+                .split(';')
+                .map(cookie => cookie.split('='))
+                .reduce((accumulator, [key, value]) => ({ ...accumulator, [key.trim()]: decodeURIComponent(value) }), {});
+
+    $("#save").click(function(){
+        var data_str={}
+        data_str['name']=$("#name").val()
+        data_str['email']=$("#email").val()
+        data_str['phone']=$("#phone").val()
+        // console.log(data_str)
+        $.ajax({
+            type:"POST",
+            url: "http://127.0.0.1:8000/addcontact_api/",
+            data: JSON.stringify(data_str),
+            headers: {Authorization: 'Bearer ' + x.access},
+            success: function(value){
+            // alert('success')
+            // alert(value.message)
+              if(value.status==200){
+                console.log(value)
+                window.location="/"
+              }
+            },
+            error: function(errormsg){
+              console.log(errormsg)
+              alert('error')
+              console.log(errormsg)
+            }
+        });
+    })
+</script>
+{% endblock %}

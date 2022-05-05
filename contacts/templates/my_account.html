@@ -1,0 +1,99 @@
+{% extends 'layout/base.html' %}
+{% block title %}my account{% endblock %}
+{% block body %}
+    <h1>My Account</h1>
+
+    <div class="card container" id="card" style="width:25em">
+        <div class="row" style="float: right">
+            <button id="edit_contact" class="col btn btn-primary m-3">
+                Edit
+            </button>
+        </div>
+        <div class="row" id="show_info">
+
+        </div>
+        <div class="row" id="edit_info">
+
+        </div>
+    </div>
+    <script>
+    let x = document.cookie
+        .split(';')
+        .map(cookie => cookie.split('='))
+        .reduce((accumulator, [key, value]) => ({ ...accumulator, [key.trim()]: decodeURIComponent(value) }), {});
+
+        var path = window.location.pathname.split('/')
+        console.log(path[2])
+        $.ajax({
+            type : "GET",
+            url : "http://127.0.0.1:8000/my_account_api/",
+            headers: {Authorization: 'Bearer ' + x.access},
+            success: function(value){
+                console.log("value")
+                console.log(value)
+                $("#show_info").append(`
+                        <div>
+                            <label for="name" style="font-size:20px">Name : </label><br>
+                            <h3 id="name">${ value.full_name }</h3><br>
+                        </div>
+                        <div>
+                            <label for="phone" style="font-size:20px">Email : </label><br>
+                            <h3 id="phone">${ value.email }</h3><br>
+                        </div>
+                        <div>
+                            <a href="/"><button class="btn btn-primary">Back</button></a>
+                        </div>
+                `)
+                $('#edit_info').append(`
+                        <div>
+                            <label for="name" style="font-size:20px">Name : </label><br>
+                            <input name="name" class="btn-lg" style="width: 300px; text-align: center;" id="name_input" value="${ value.full_name }" placeholder=""><br>
+                        </div>
+                        <div>
+                            <label for="email_input" style="font-size:20px">Email : </label><br>
+                            <input name="email" class="btn-lg" style="width: 300px; text-align: center;" id="email_input" value="${ value.email }" placeholder="" readonly><br>
+                        </div>
+                        <div>
+                            <a href="${ window.location.pathname }"><button class="btn btn-primary m-3">Back</button></a>
+                            <input type="submit" onclick="edit_my_account()" class="btn btn-warning m-3" id="edit_contact_details" value="Save">
+                        </div>
+                `)
+            },error: function(errormsg){
+                console.log(errormsg)
+            }
+        });
+
+        $('#edit_info').hide();
+
+        $('#edit_contact').click(function(){
+            $('#show_info').hide();
+            $('#edit_info').show();
+            $('#edit_contact').hide()
+        })
+
+        function edit_my_account(){
+            input_data = {}
+            input_data['name'] = $('#name_input').val()
+            input_data['email'] = $('#email_input').val()
+
+            $.ajax({
+                type: "PUT",
+                url: "http://127.0.0.1:8000/edit_my_account_api/",
+                headers: {Authorization: 'Bearer ' + x.access},
+                data: JSON.stringify(input_data),
+                success: function(data){
+                    // alert("success")
+                    // alert(data.message)
+                    if(data.status == 200){
+                        window.location = "http://127.0.0.1:8000/my_account/"
+                    }
+                },
+                error: function(data){
+                    console.log("error checking")
+                    console.log(data)
+                }
+            });
+        }
+
+    </script>
+{% endblock %}

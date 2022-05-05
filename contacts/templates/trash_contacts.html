@@ -1,0 +1,157 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Trash{% endblock %}
+
+{% block body %}
+
+<h1 class="m-5" id="trash_list_head">Trash List</h1>
+<h1 class="m-5" id="log_info">Sign up or Sign in</h1>
+
+<div class="container" id="main_container">
+    <div class="row">
+        <div class="col ms-5">
+            <div class="row">
+                <div class="col" style="text-align: center;">
+                    <span class="h4"><strong>Name</strong></span>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <span class="h4"><strong>email</strong></span>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <span class="h4"><strong>Phone</strong></span>
+                </div>
+            </div>
+        </div>
+        <div class="col ms-5" style="max-width: 20%;">
+            <div class="ms-3 row">
+                <div class="col" style="text-align: center;">
+                    <span class="h4"><strong>Restore</strong></span>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <span class="h4"><strong>Trash</strong></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" id="card">
+
+    </div>
+
+</div>
+
+
+
+
+
+    <script>
+    $('#trash_list_head').hide()
+    $('#main_container').hide()
+    let cookie_data = document.cookie
+    const part = cookie_data.split(";")
+    if(part[1]){
+        $('#trash_list_head').show()
+        $('#main_container').show()
+        $('#log_info').hide()
+    }
+    let x = document.cookie
+        .split(';')
+        .map(cookie => cookie.split('='))
+        .reduce((accumulator, [key, value]) => ({ ...accumulator, [key.trim()]: decodeURIComponent(value) }), {});
+
+        $.ajax({
+            type: "GET",
+            url: "http://127.0.0.1:8000/trash_list_api/",
+            headers: {Authorization: 'Bearer ' + x.access},
+            data: "",
+            success: function(data){
+                if(data.length == 0){
+                    $('#main_container').html(`
+                        <div>
+                            <h1 class="text-center m-5"><strong>Your Trash is empty</strong></h1>
+                        </div>
+                    `)
+                }
+                else{
+                    for(var i = 0; i < data.length; i++){
+                        $('#card').append(`
+                            <div class="row" style="align-items: center;">
+                                <div class="col" style="vertical-align: middle; align-items: center;">
+                                    <div class="row p-2">
+                                        <div class="col">
+                                            <span class="h4">${data[i].name}</span>
+                                        </div>
+                                        <div class="col">
+                                            <span class="h4">${data[i].email}</span>
+                                        </div>
+                                        <div class="col">
+                                            <span class="h4">${data[i].phone}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col" style="max-width: 20%;">
+                                    <div class="row">
+                                        <div class="col">
+                                            <button class="m-3 col btn neuEffect btn-lg fa fa-undo" style="font-size: 18px"  onclick="restore_contact(this)" id="${data[i].slug}"></button>
+                                        </div>
+                                        <div class="col">
+                                            <button class="m-3 col btn neuEffect btn-lg fa fa-trash" style="font-size: 18px"  onclick="trash_contact(this)" id="${data[i].slug}"></button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        `)
+                    }
+                }
+            },
+            error: function(data){
+                console.log("Error Checking")
+                console.log(data)
+            }
+        });
+
+        function restore_contact(slg){
+            // alert(slg.id)
+            $.ajax({
+                type: "PUT",
+                url: "http://127.0.0.1:8000/trash_restore_api/"+slg.id+"/",
+                headers: {Authorization: 'Bearer ' + x.access},
+                success: function(data){
+                    // alert("success")
+                    // alert(data.message)
+                    if(data.status == 200){
+                        window.location = "/trashcontact/"
+                    }
+                },
+                error: function(data){
+                    console.log("error_delete")
+                    console.log(data)
+                }
+            });
+        }
+
+        function trash_contact(slg){
+            // alert(slg.id)
+            $.ajax({
+                type: "DELETE",
+                url: "http://127.0.0.1:8000/trash_contact_api/"+slg.id+"/",
+                headers: {Authorization: 'Bearer ' + x.access},
+                //data: JSON.stringify(delete_data),
+                success: function(data){
+                    // alert("success")
+                    // alert(data.message)
+                    if(data.status == 200){
+                        window.location = "/trashcontact/"
+                    }
+                },
+                error: function(data){
+                    console.log("error_delete")
+                    console.log(data)
+                }
+            });
+        }
+
+    </script>
+
+{% endblock %}
+

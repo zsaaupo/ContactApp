@@ -1,0 +1,47 @@
+{% extends 'layout/base.html' %}
+{% block title %} Sign in {% endblock %}
+
+{% block body %}
+    <h1 class="text-center">Sign in</h1>
+    <hr>
+    <div class="access_input text-center">
+        {% csrf_token %}
+        <label for="email">Email</label><br>
+        <input type="email" id="email" name="email" value="" placeholder="abc@gmail.com"><br>
+
+        <label for="password">Password</label><br>
+        <input type="password" id="password" name="password" value="" placeholder="password"><br>
+
+        <input class="m-3 btn neuEffect btn-lg" type="submit" value="Sign in" id="signin_submit">
+    </div>
+
+    <script>
+        $('#signin_submit').click(function (){
+            let data_str = {}
+            let url_path = "http://127.0.0.1:8000/registration/api/sign_in/"
+            data_str['email'] = $('#email').val()
+            data_str['password'] = $('#password').val()
+            console.log(data_str)
+            $.ajax({
+                type: "POST",
+                url: url_path,
+                contentType: 'application/json',
+                data: JSON.stringify(data_str),
+                headers: {"X-CSRFToken": '{{ csrf_token }}'},
+                success: function (value){
+                    if (value.status == 200){
+                        document.cookie='access='+value.access+';path=/'
+                        document.cookie='slug='+value.slug+';path=/'
+                        document.cookie='user_name='+value.user_name+';path=/'
+
+                        window.location="/"
+                    }
+                },
+                error: function (errormsg){
+                    console.log(errormsg)
+                }
+            });
+        })
+    </script>
+{% endblock %}
+

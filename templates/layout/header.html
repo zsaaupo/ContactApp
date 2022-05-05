@@ -1,0 +1,20 @@
+{% load static %}
+
+<div id="topnav" class="mt-5 topnav row mx-auto" style="max-width: 100%;">
+
+    <div style="text-align: left;" class="col">
+        <a id="logo" class="m-3 btn btn-lg" href="/" onmouseover="this.style.backgroundColor='#c3c7cb';" onmouseout="this.style.backgroundColor='white';" ><img src="{% static 'images/logo.png' %}" alt="LOGO" class="rounded-circle" height="50" width="50"><strong> Contact Management</strong></a>
+    </div>
+    <div style="text-align: center;" class="col m-3">
+        <a id="home" class="m-3 btn neuEffect btn-lg" href="/">Home</a>
+        <a id="add_new_contact" class="m-3 fa fa-plus btn neuEffect btn-lg" href="/addcontact/"><strong class="h3"> Create New</strong></a>
+        <a class="m-3 btn neuEffect btn-lg" id="trash" href="/trashcontact/">Trash</a>
+    </div>
+    <div style="text-align: right" class="col">
+<!--        sign in / sign up / sign out will added here-->
+        <a class="m-3 btn neuEffect btn-lg" id="sign_up" href="/registration/signup/">Sign Up</a>
+        <a class="m-3 btn neuEffect btn-lg" id="sign_in" href="/registration/signin/">Sign in</a>
+        <a class="m-3 btn neuEffect btn-lg" id="my_account" href="/my_account/"></a>
+         <a class="m-3 btn neuEffect btn-lg" id="sign_out" href="/registration/signout/">Sign out</a>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}Contacts{% endblock %}
+
+{% block body %}
+
+<div style="align-items: center;" id="qrcode">
+<h1 class="m-5" id="contract_list_head">Contact QR code</h1>
+</div>
+
+<div id="QR_code">
+</div>
+
+    <script>
+    let x = document.cookie
+        .split(';')
+        .map(cookie => cookie.split('='))
+        .reduce((accumulator, [key, value]) => ({ ...accumulator, [key.trim()]: decodeURIComponent(value) }), {});
+
+        var path = window.location.pathname.split('/')
+        console.log(path[2])
+        $.ajax({
+            type : "GET",
+            url : "http://127.0.0.1:8000/details_api/"+path[2]+"/",
+            headers: {Authorization: 'Bearer ' + x.access},
+            success: function(value){
+            console.log("value")
+            console.log(value)
+                $("#QR_code").html(`
+                        <div>
+                            <img src="${ value.qr_code }">
+                        </div>
+                `)
+            },
+            error: function(errormsg){
+                console.log(errormsg)
+            }
+        });
+</script>
+
+{% endblock %}

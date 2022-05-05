@@ -1,0 +1,29 @@
+a{
+    text-decoration: none;
+    color: black;
+}
+a:hover{
+    text-decoration: none;
+    color: black;
+}
+
+.hoverEffect:hover {
+    transition: 0.3s;
+    background-color: rgb(235, 235, 235);
+    font-weight: bold;
+    transform: scale(1.05);
+}
+
+.neuEffect{
+box-shadow: 9px 9px 16px rgb(163,177,198,0.9), -9px -9px 16px  rgba(255,255,255, 0.76);
+border-radius: 10px;
+align-items: center;
+background-color: white;
+word-break: break-word;
+word-break: break-word;
+/*max-width: 700px;*/
+}
+
+.neuEffect:hover{
+background-color: #c3c7cb;  /*was default antiquewhite*/
+}

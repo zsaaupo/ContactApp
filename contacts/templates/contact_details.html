@@ -1,0 +1,136 @@
+{% extends 'layout/base.html' %}
+{% block title %}Details{% endblock %}
+{% block body %}
+    <h1>Details</h1>
+
+    <div class="card container" id="card" style="width:25em">
+        <div class="row" style="float: right">
+            <button id="edit_contact" class="col m-3 btn btn-primary">
+                Edit
+            </button>
+
+            <button id="delete_contact" onclick="delete_contact()" class="col m-3 btn btn-danger">
+                Delete
+            </button>
+        </div>
+        <div class="row" id="show_info">
+
+        </div>
+        <div class="row" id="edit_info">
+
+        </div>
+    </div>
+    <script>
+    let x = document.cookie
+        .split(';')
+        .map(cookie => cookie.split('='))
+        .reduce((accumulator, [key, value]) => ({ ...accumulator, [key.trim()]: decodeURIComponent(value) }), {});
+
+        var path = window.location.pathname.split('/')
+        console.log(path[2])
+        $.ajax({
+            type : "GET",
+            url : "http://127.0.0.1:8000/details_api/"+path[2]+"/",
+            headers: {Authorization: 'Bearer ' + x.access},
+            success: function(value){
+            console.log("value")
+            console.log(value)
+                $("#show_info").append(`
+                        <div>
+                            <label for="name" style="font-size:20px">Name : </label><br>
+                            <h3 id="name">${ value.name }</h3><br>
+                        </div>
+                        <div>
+                            <label for="phone" style="font-size:20px">Phone : </label><br>
+                            <h3 id="phone">${ value.phone }</h3><br>
+                        </div>
+                        <div>
+                            <label for="email" style="font-size:20px">Email : </label><br>
+                            <h3 id="email">${ value.email }</h3><br>
+                        </div><br>
+                        <div>
+                            <a href="/"><button class="m-3 btn btn-primary">Back</button></a>
+                        </div>
+                `)
+                $('#edit_info').append(`
+                        <div>
+                            <label for="name" style="font-size:20px">Name : </label><br>
+                            <input name="name" class="btn-lg" id="name_input" value="${ value.name }" placeholder=""><br>
+                        </div>
+                        <div>
+                            <label for="phone" style="font-size:20px">Phone : </label><br>
+                            <input name="phone" class="btn-lg" id="phone_input" value="${ value.phone }" placeholder=""><br>
+                        </div>
+                        <div>
+                            <label for="email" style="font-size:20px">Email : </label><br>
+                            <input name="email" class="btn-lg" id="email_input" value="${ value.email }" placeholder=""><br>
+                        </div><br>
+                        <div>
+                            <a href="${ window.location.pathname }"><button class="btn btn-primary m-3">Back</button></a>
+                            <input type="submit" onclick="edit_contact_details()" class="btn btn-warning m-3" id="edit_contact_details" value="Save">
+                        </div>
+                `)
+
+            },error: function(errormsg){
+                console.log(errormsg)
+            }
+        });
+
+        $('#edit_info').hide();
+
+        $('#edit_contact').click(function(){
+            $('#show_info').hide();
+            $('#edit_info').show();
+            // point to be noted
+            $('#edit_contact').hide()
+            $('#delete_contact').hide();
+        })
+
+        function edit_contact_details(){
+            input_data = {}
+            input_data['name'] = $('#name_input').val()
+            input_data['phone'] = $('#phone_input').val()
+            input_data['email'] = $('#email_input').val()
+
+            $.ajax({
+                type: "PUT",
+                url: "http://127.0.0.1:8000/contact_edit_api/"+path[2]+"/",
+                data: JSON.stringify(input_data),
+                success: function(data){
+                    // alert("success")
+                    // alert(data.message)
+                    if(data.status == 200){
+                        window.location = "http://127.0.0.1:8000/details/"+path[2]+"/"
+                    }
+                },
+                error: function(data){
+                    console.log("error checking")
+                    console.log(data)
+                }
+            });
+        }
+
+        function delete_contact(){
+            delete_data = {}
+
+            $.ajax({
+                type: "PUT",
+                url: "http://127.0.0.1:8000/deletecontact_api/"+path[2]+"/",
+                headers: {Authorization: 'Bearer ' + x.access},
+                //data: JSON.stringify(delete_data),
+                success: function(data){
+                    // alert("success")
+                    // alert(data.message)
+                    if(data.status == 200){
+                        window.location = "/"
+                    }
+                },
+                error: function(data){
+                    console.log("error_delete")
+                    console.log(data)
+                }
+            });
+        }
+
+    </script>
+{% endblock %}
